@@ -6,6 +6,7 @@
       <div id="author">{{this.todayPoem.dynasty}}   {{this.todayPoem.author}}</div>
     </div>
   </div>
+  本网站已运行:{{this.timeMsg}}
   <div id="pageHelperUp" >
     <el-pagination
         background
@@ -63,8 +64,21 @@ export default {
   name: "Home",
   created() {
     this.randomIngURL();
+  },
+  mounted() {
     this.setDayPoem();
     this.getBlogList();
+    this.getCreateDate();
+    let _this = this; // 声明一个变量指向Vue实例this，保证作用域一致
+    this.timer = setInterval(() => {
+      _this.date = new Date(); // 修改数据date
+      this.getDateDiff();
+    }, 1000)
+  },
+  beforeDestroy() {
+    if (this.timer) {
+      clearInterval(this.timer); // 在Vue实例销毁前，清除我们的定时器
+    }
   },
   components:{
   },
@@ -83,20 +97,42 @@ export default {
         total :10
       },
       blogList:[
-      ]
+      ],
+      date:new Date(),
+      createDate:new Date(),
+      timeMsg:null,
     }
   },
   computed:{
-
   },
   methods:{
+    getDateDiff(){
+      const stime = new Date(this.createDate);
+      const etime = this.date;
+      const usedTime = etime - stime
+// 计算相差的天数
+      const days = Math.floor(usedTime / (24 * 3600 * 1000))
+// 计算天数后剩余的毫秒数
+      const leave1 = usedTime % (24 * 3600 * 1000)
+// 计算出小时数
+      const hours = Math.floor(leave1 / (3600 * 1000))
+// 计算小时数后剩余的毫秒数
+      const leave2 = leave1 % (3600 * 1000)
+// 计算相差分钟数
+      const minutes = Math.floor(leave2 / (60 * 1000))
+// 计算分钟数后剩余的毫秒数
+      const leave3 = leave2 % (60 * 1000)
+// 计算相差秒数
+      const second = Math.floor(leave3 / 1000)
+      const time = days + '天' + hours + '时' + minutes + '分' + second + '秒'
+      this.timeMsg=time;
+    },
     randomNum(minNum,maxNum){
       return parseInt(Math.random()*(maxNum-minNum+1)+minNum,10);
     },
     randomIngURL(){
       const id=this.randomNum(1,5);
-      this.imgURL=require('../assets/img/fushihui'+id+'.jpg')
-      console.log(this.imgURL);
+      this.imgURL='https://img.nickxiao.icu/fushihui'+id+'.jpg'
     },
     setDayPoem(){
       const jinrishici = require('jinrishici');
@@ -106,7 +142,6 @@ export default {
         this.todayPoem.author=result.data.origin.author;
         this.todayPoem.dynasty=result.data.origin.dynasty;
         this.todayPoem.daySentence=result.data.content;
-        console.log(this.todayPoem)
       });
     },
     async getBlogList(){
@@ -119,7 +154,6 @@ export default {
       await axios({
         url:'/blog/blogPage/'+this.page.pageNum+'/'+this.page.pageSize
       }).then(result=>{
-        console.log(result);
         this.blogList=result.data.data;
         this.page.total=result.data.total;
         loading.close();
@@ -151,10 +185,17 @@ export default {
         highlight: (code) => hljs.highlightAuto(code).value,
       })
       return marked(item.content).substring(0,300);
+    },
+     async getCreateDate() {
+       await axios({
+        url:'/time/timeRecord'
+      }).then(result=>{
+        this.createDate=result.data.createTime;
+        this.getDateDiff();
+      })
     }
   }
 }
-
 Date.prototype.format = function(fmt) {
   var o = {
     "M+" : this.getMonth()+1,                 //月份
@@ -241,5 +282,10 @@ a{
 }
 .router-link-active{
   color: darkgray;
+}
+
+::v-deep img{
+  width: 50%;
+  height: 50%;
 }
 </style>

@@ -104,6 +104,10 @@ export default {
     this.getBlogID();
     this.getBlog();
   },
+  activated() {
+    this.getBlogID();
+    this.getBlog();
+  },
   components:{
   }
 
@@ -143,6 +147,11 @@ export default {
 }
 #asideFloat{
 }
+::v-deep img{
+  width: 50%;
+  height: 50%;
+}
+
 
 
 </style>
