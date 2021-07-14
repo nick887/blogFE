@@ -22,9 +22,42 @@
 </template>
 
 <script>
-import axios from "axios";
+import { Remarkable } from 'remarkable';
 import hljs from 'highlight.js'
-import 'highlight.js/styles/atelier-dune-dark.css' //样式文件
+var md = new Remarkable('full', {
+  html:         false,        // Enable HTML tags in source
+  xhtmlOut:     false,        // Use '/' to close single tags (<br />)
+  breaks:       false,        // Convert '\n' in paragraphs into <br>
+  langPrefix:   'language-',  // CSS language prefix for fenced blocks
+  linkify:      true,         // autoconvert URL-like texts to links
+  linkTarget:   '',           // set target to open link in
+
+  // Enable some language-neutral replacements + quotes beautification
+  typographer:  false,
+
+  // Double + single quotes replacement pairs, when typographer enabled,
+  // and smartquotes on. Set doubles to '«»' for Russian, '„“' for German.
+  quotes: '“”‘’',
+
+  // Highlighter function. Should return escaped HTML,
+  // or '' if input not changed
+  highlight: function (str, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      try {
+        return hljs.highlight(lang, str).value;
+        // eslint-disable-next-line no-empty
+      } catch (err) {}
+    }
+
+    try {
+      return hljs.highlightAuto(str).value;
+      // eslint-disable-next-line no-empty
+    } catch (err) {}
+
+    return ''; // use external default escaping
+  }
+});
+import axios from "axios";
 import Showdown from 'showdown';
 import showdownToc from 'showdown-toc';
 axios.defaults.baseURL='http://47.116.139.54:8081'
@@ -48,25 +81,7 @@ export default {
   },
   computed:{
     formatContent(){
-      const marked=require("marked")
-      hljs.configure({
-        tabReplace: '  ',
-        classPrefix: 'hljs-',
-        languages: ['CSS', 'HTML, XML', 'JavaScript', 'PHP', 'Python', 'Stylus', 'TypeScript', 'Markdown']
-      })
-
-      marked.setOptions({
-        renderer:new marked.Renderer(),
-        pedantic: false,
-        gfm: true,
-        breaks: false,
-        sanitize: false,
-        smartLists: true,
-        smartypants: false,
-        xhtml: false,
-        highlight: (code) => hljs.highlightAuto(code).value,
-      })
-      return marked(this.blog.content).replace(/<pre>/g, "<pre class='hljs'>");
+      return md.render(this.blog.content);
     },
     getAside(){
       const toc = []
@@ -142,7 +157,7 @@ export default {
 #container{
   height: 100vh;
   text-align: center;
-  font-size: 25px;
+  font-size: 14px;
   font-family: "Times New Roman", Times, serif;
 }
 #asideFloat{
