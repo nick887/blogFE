@@ -21,7 +21,7 @@
     <el-table-column
         prop="id"
         label="id"
-        width="40">
+        width="300">
     </el-table-column>
     <el-table-column
         prop="title"
@@ -29,11 +29,11 @@
         width="180">
     </el-table-column>
     <el-table-column
-        prop="releaseTime"
+        prop="created"
         label="发布时间">
     </el-table-column>
     <el-table-column
-        prop="updateTime"
+        prop="updated"
         label="更新时间">
     </el-table-column>
     <el-table-column
@@ -84,7 +84,7 @@
 
 <script>
 import axios from "axios";
-axios.defaults.baseURL='http://47.116.139.54:8081'
+axios.defaults.baseURL='http://localhost:8081'
 export default {
   name: "BlogManage",
   methods:{
@@ -96,10 +96,15 @@ export default {
         background: 'rgba(0, 0, 0, 0.7)'
       });
       axios({
-        url:'/blog/blogPage/'+this.pageNum+'/'+this.pageSize
+         method: 'post',
+        url:'/blog',
+        data:{
+          "offset": this.pageNum,
+          "limit": this.pageSize,
+        }
       }).then(result=>{
         loading.close();
-        this.blogList=result.data.data;
+        this.blogList=result.data.blogs;
         this.total=result.data.total;
         console.log(this.blogList)
       })
@@ -118,7 +123,10 @@ export default {
     },
     handleDelete(row){
         axios({
-          url:'/blog/deleteABlog/'+row.id
+          url:'/blog/delete',
+          data:{
+            "id":row.id,
+          }
         }).then(result=>{
           if(result.status==200)
           {
@@ -141,7 +149,7 @@ export default {
         query:{
           title:row.title,
           topic:row.topic,
-          content:row.content,
+          body:row.body,
           id:row.id,
         }
       })
@@ -164,12 +172,12 @@ export default {
       pageSize:10,
       blogList:[
         {
-          content:null,
+          body:null,
           id:0,
           likes:0,
-          releaseTime:null,
+          created:null,
           title:null,
-          updateTime:null,
+          updated:null,
           visitCount:null,
         }
       ],
@@ -208,13 +216,7 @@ Date.prototype.format = function(fmt) {
   margin: 10px;
 }
 #addBlog{
-  width:100px;/**宽度**/
-  height:50px;/**高度**/
-  position:absolute;/**绝对定位**/
-  right: 10%;
-  top:14%;/**顶部50%**/
-  margin-top:-50px;/**上移-50%**/
-  margin-left:-100px;/**左移-50%**/
+  float: right;
   text-align: center;
 }
 </style>

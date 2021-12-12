@@ -7,7 +7,7 @@
       </div>
       <el-form ref="form" :model="user" label-width="80px" id="form">
         <el-form-item label="账户" >
-          <el-input v-model="user.account"></el-input>
+          <el-input v-model="user.email"></el-input>
         </el-form-item>
         <el-form-item label="密码" >
           <el-input v-model="user.password" autocomplete="off" type="password"></el-input>
@@ -24,13 +24,13 @@
 
 <script>
 import axios from "axios";
-axios.defaults.baseURL='http://47.116.139.54:8081'
+axios.defaults.baseURL='http://localhost:8081'
 export default {
   name: "Login",
   data(){
     return{
       user:{
-        account:null,
+        email:null,
         password:null,
       }
     }
@@ -39,17 +39,17 @@ export default {
     async loginSubmit(){
       await axios({
         method:'post',
-        url:'/user/login',
+        url:'/user/signIn',
         data:this.user
       }).then(result=>{
         console.log(result);
-        if(result.data==1)
+        if(result.status==200)
         {
           this.$notify.success({
             title:'成功',
             message:'登陆成功'
           })
-          window.sessionStorage.setItem("token","yes");
+          window.sessionStorage.setItem("token",result.data.token);
           this.$router.replace("/admin")
         }else {
           this.$notify.error({

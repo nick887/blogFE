@@ -2,7 +2,6 @@
 <div>
   <div id="back-end">
     <el-container id="container">
-      <el-header id="header">控制台</el-header>
       <el-container>
         <el-aside width="200px" id="aside">
           <el-menu
@@ -27,7 +26,6 @@
           <router-view/>
         </el-main>
       </el-container>
-      <el-footer id="footer">foot</el-footer>
     </el-container>
   </div>
 </div>

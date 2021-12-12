@@ -8,15 +8,16 @@
       <el-button type="success" plain @click="submitBlog">提交</el-button>
     </div>
   </div>
-    <MarkdownPro v-model="value" :height="650" :theme="'gitHub'"></MarkdownPro>
+   
 
 </div>
 </template>
 
 <script>
 import { MarkdownPro } from 'vue-meditor'
+
 import axios from "axios";
-axios.defaults.baseURL='http://47.116.139.54:8081'
+axios.defaults.baseURL='http://localhost:8081'
 export default {
   name: "EditMd",
   data(){
@@ -25,7 +26,7 @@ export default {
       blog:{
         title:null,
         topic:1,
-        content:null,
+        body:null,
         id:0,
       },
     }
@@ -39,14 +40,15 @@ export default {
   },
   methods:{
     async submitBlog(){
-      this.blog.content=this.value;
+      this.blog.body=this.value;
       console.log(this.blog);
       if(this.blog.id!==0)
       {
         await axios({
-          url:'/blog/updateABlog',
+          url:'/blog/update',
           method:'post',
-          data:this.blog
+          data:this.blog,
+          headers: {'Authorization': window.sessionStorage.getItem('token')},
         }).then(result=>{
           if(result.status===200)
           {
@@ -66,9 +68,14 @@ export default {
       }
       else{
         await axios({
-          url:'/blog/addABlog',
+          url:'/blog/add',
           method:'post',
-          data:this.blog
+          data:{
+            "body":this.blog.body,
+            "title":this.blog.title,
+            "topic":this.blog.topic,
+          },
+          headers: {'Authorization': window.sessionStorage.getItem('token')},
         }).then(result=>{
           if(result.status==200)
           {
@@ -98,12 +105,12 @@ export default {
       {
         this.blog.topic=this.$route.query.topic;
       }
-      this.blog.content=this.$route.query.content;
+      this.blog.body=this.$route.query.body;
       if(this.$route.query.id)
       {
         this.blog.id=this.$route.query.id;
       }
-      this.value=this.blog.content;
+      this.value=this.blog.body;
     }
   }
 }
@@ -114,24 +121,12 @@ export default {
 #markdown{
 }
 #title{
-  width:300px;/**宽度**/
-  height:100px;/**高度**/
-  position:absolute;/**绝对定位**/
-  left:20%;/**左边50%**/
-  top:14%;/**顶部50%**/
-  margin-top:-50px;/**上移-50%**/
-  margin-left:-100px;/**左移-50%**/
+  float: left;
 
 
 }
 #submit{
-  width:300px;/**宽度**/
-  height:100px;/**高度**/
-  position:absolute;/**绝对定位**/
-  right: 0%;
-  top:17%;/**顶部50%**/
-  margin-top:-50px;/**上移-50%**/
-  margin-left:-100px;/**左移-50%**/
+  float:right;
 }
 #abc{
   font-size: 20px;

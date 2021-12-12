@@ -3,7 +3,7 @@
   <el-upload
       class="upload-demo"
       ref="upload"
-      action="http://47.116.139.54/file/upload"
+      action="http://117.50.163.11:8080/file/upload"
       :on-remove="handleRemove"
       :file-list="fileList"
       :auto-upload="false"

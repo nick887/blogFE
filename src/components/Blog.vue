@@ -1,117 +1,79 @@
 <template>
-<div id="blog">
-  <el-container id="container">
-    <el-header id="header">{{blog.title}}
-    </el-header>
-    <el-container>
-      <el-aside width="200px" id="aside">
-        <div id="asideFloat">
-          <div v-for="item in getAside" :key="item.text" @click="gotoText(item)">
-            {{item.text}}
-          </div>
-        </div>
-      </el-aside>
-      <el-main id="main"  v-html="formatContent">
-
-      </el-main>
+  <div id="blog">
+    <el-container id="container">
+      <el-header id="header">{{blog.title}}</el-header>
+      <el-container>
+        <el-main id="main" class="markdown-body" style="text-align:left" v-html="formatContent"></el-main>
+      </el-container>
     </el-container>
-    <el-footer id="footer">
-    </el-footer>
-  </el-container>
-</div>
+  </div>
 </template>
 
 <script>
-import { Remarkable } from 'remarkable';
-import hljs from 'highlight.js'
-var md = new Remarkable('full', {
-  html:         false,        // Enable HTML tags in source
-  xhtmlOut:     false,        // Use '/' to close single tags (<br />)
-  breaks:       false,        // Convert '\n' in paragraphs into <br>
-  langPrefix:   'language-',  // CSS language prefix for fenced blocks
-  linkify:      true,         // autoconvert URL-like texts to links
-  linkTarget:   '',           // set target to open link in
-
-  // Enable some language-neutral replacements + quotes beautification
-  typographer:  false,
-
-  // Double + single quotes replacement pairs, when typographer enabled,
-  // and smartquotes on. Set doubles to '«»' for Russian, '„“' for German.
-  quotes: '“”‘’',
-
-  // Highlighter function. Should return escaped HTML,
-  // or '' if input not changed
-  highlight: function (str, lang) {
-    if (lang && hljs.getLanguage(lang)) {
-      try {
-        return hljs.highlight(lang, str).value;
-        // eslint-disable-next-line no-empty
-      } catch (err) {}
-    }
-
-    try {
-      return hljs.highlightAuto(str).value;
-      // eslint-disable-next-line no-empty
-    } catch (err) {}
-
-    return ''; // use external default escaping
-  }
-});
+import "github-markdown-css/github-markdown-light.css";
+import hljs from "highlight.js";
+import 'highlight.js/styles/idea.css';
 import axios from "axios";
-import Showdown from 'showdown';
-import showdownToc from 'showdown-toc';
-axios.defaults.baseURL='http://47.116.139.54:8081'
+axios.defaults.baseURL = "http://localhost:8081";
 export default {
   name: "Blog",
-  data(){
-    return{
-      blogID:0,
+  data() {
+    return {
+      blogID: 0,
       blog: {
-        content:null,
-        id:0,
-        likes:0,
-        releaseTime:null,
-        title:null,
-        updateTime:null,
-        visitCount:null
+        body: null,
+        id: 0,
+        likes: 0,
+        created: null,
+        title: null,
+        updated: null,
+        visitCount: null
       },
-      test:null,
-      toc:null,
+      test: null,
+      toc: null
+    };
+  },
+  computed: {
+    formatContent() {
+      const marked = require("marked");
+      marked.setOptions({
+        renderer: new marked.Renderer(),
+        pedantic: false,
+        gfm: true,
+        tables: true,
+        breaks: false,
+        sanitize: false,
+        smartLists: true,
+        smartypants: false,
+        xhtml: false,
+        highlight: code => hljs.highlightAuto(code).value
+      });
+      console.log(this.blog.body);
+      return marked(this.blog.body);
     }
   },
-  computed:{
-    formatContent(){
-      return md.render(this.blog.content);
-    },
-    getAside(){
-      const toc = []
-      const showdown = new Showdown.Converter({ extensions: [showdownToc({ toc })] });
-      showdown.makeHtml(this.blog.content);
-      return toc
-    },
-  },
-  methods:{
-
-    async getBlog(){
+  methods: {
+    async getBlog() {
       const loading = this.$loading({
         lock: true,
-        text: 'Loading',
-        spinner: 'el-icon-loading',
-        background: 'rgba(0, 0, 0, 0.7)'
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)"
       });
       await axios({
-        url:'/blog/getABlog/'+this.blogID,
-      }).then(result=>{
+        url: "/blog/" + this.blogID
+      }).then(result => {
         loading.close();
-        this.blog=result.data
-        console.log(this.blog)
-      })
+        // console.log(result);
+        this.blog = result.data.blog;
+        console.log(this.blog);
+      });
     },
-    getBlogID(){
-      this.blogID=this.$route.params.id
+    getBlogID() {
+      this.blogID = this.$route.params.id;
     },
 
-    gotoText(item){
+    gotoText(item) {
       document.querySelector(item.text).scrollIntoView(true);
     }
   },
@@ -123,50 +85,46 @@ export default {
     this.getBlogID();
     this.getBlog();
   },
-  components:{
-  }
-
-}
-
-
-
+  components: {}
+};
 </script>
 
 <style scoped>
-#footer{
-  height: 300px;
-  background-color: beige;
+.markdown-body {
+  box-sizing: border-box;
+  min-width: 200px;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 45px;
 }
-#header{
+
+
+#footer {
+  height: 300px;
+  background-color: rgb(251, 251, 251);
+}
+#header {
   height: 200px;
-  background-color: cornflowerblue;
+  background-color: rgb(255, 255, 255);
   font-size: 40px;
   text-align: center;
 }
-#main{
+#main {
   text-align: left;
 }
-#aside{
-  background-color: #EBEBEB;
-  text-align: left;
-  font-size: 15px;
-}
-#blog{
+#blog {
   height: 100vh;
 }
-#container{
+#container {
   height: 100vh;
   text-align: center;
   font-size: 14px;
   font-family: "Times New Roman", Times, serif;
 }
-#asideFloat{
+#asideFloat {
 }
-::v-deep img{
+::v-deep img {
   width: 50%;
   height: 50%;
 }
-
-
-
 </style>

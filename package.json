@@ -13,18 +13,22 @@
     "dayjs": "^1.10.4",
     "editor.md": "^1.5.0",
     "element-ui": "^2.15.1",
+    "github-markdown-css": "^5.1.0",
+    "highlight.js": "^11.3.1",
     "jinrishici": "^1.0.6",
     "jquery": "^3.6.0",
     "markdown-toc": "^1.2.0",
     "marked": "^2.0.3",
-    "mavon-editor": "^2.9.1",
+    "mavon-editor": "^2.10.1",
     "remarkable": "^2.0.1",
     "showdown": "^1.9.1",
     "showdown-toc": "^1.0.1",
     "vue": "^2.6.11",
+    "vue-axios": "^3.4.0",
     "vue-markdown": "^2.2.4",
     "vue-meditor": "^2.1.1",
-    "vue-router": "^3.5.1"
+    "vue-router": "^3.5.1",
+    "wangeditor": "^4.7.10"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
@@ -36,6 +40,7 @@
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "vue-cli-plugin-element": "^1.0.1",
+    "vue-markdown-highlight": "^1.0.5",
     "vue-template-compiler": "^2.6.11"
   },
   "eslintConfig": {
