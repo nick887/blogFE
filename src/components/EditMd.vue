@@ -8,16 +8,15 @@
       <el-button type="success" plain @click="submitBlog">提交</el-button>
     </div>
   </div>
-   
+    <MarkdownPro v-model="value" :height="650" :theme="'gitHub'"></MarkdownPro>
 
 </div>
 </template>
 
 <script>
 import { MarkdownPro } from 'vue-meditor'
-
 import axios from "axios";
-axios.defaults.baseURL='http://localhost:8081'
+axios.defaults.baseURL='http://117.50.163.11:8081'
 export default {
   name: "EditMd",
   data(){
@@ -41,7 +40,6 @@ export default {
   methods:{
     async submitBlog(){
       this.blog.body=this.value;
-      console.log(this.blog);
       if(this.blog.id!==0)
       {
         await axios({
@@ -97,7 +95,6 @@ export default {
     test(){
       this.blog.content=this.value;
       this.blog.title=this.title;
-      console.log(this.blog)
     },
     initBlog(){
       this.blog.title=this.$route.query.title;

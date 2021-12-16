@@ -14,7 +14,7 @@ import "github-markdown-css/github-markdown-light.css";
 import hljs from "highlight.js";
 import 'highlight.js/styles/idea.css';
 import axios from "axios";
-axios.defaults.baseURL = "http://localhost:8081";
+axios.defaults.baseURL = "http://117.50.163.11:8081";
 export default {
   name: "Blog",
   data() {
@@ -48,7 +48,6 @@ export default {
         xhtml: false,
         highlight: code => hljs.highlightAuto(code).value
       });
-      console.log(this.blog.body);
       return marked(this.blog.body);
     }
   },
@@ -64,9 +63,7 @@ export default {
         url: "/blog/" + this.blogID
       }).then(result => {
         loading.close();
-        // console.log(result);
         this.blog = result.data.blog;
-        console.log(this.blog);
       });
     },
     getBlogID() {
@@ -78,6 +75,9 @@ export default {
     }
   },
   created() {
+    
+  },
+  mounted(){
     this.getBlogID();
     this.getBlog();
   },

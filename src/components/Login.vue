@@ -24,7 +24,7 @@
 
 <script>
 import axios from "axios";
-axios.defaults.baseURL='http://localhost:8081'
+axios.defaults.baseURL='http://117.50.163.11:8081'
 export default {
   name: "Login",
   data(){
@@ -42,7 +42,6 @@ export default {
         url:'/user/signIn',
         data:this.user
       }).then(result=>{
-        console.log(result);
         if(result.status==200)
         {
           this.$notify.success({

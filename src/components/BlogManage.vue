@@ -106,7 +106,6 @@ export default {
         loading.close();
         this.blogList=result.data.blogs;
         this.total=result.data.total;
-        console.log(this.blogList)
       })
     },
     Prev(){

@@ -1,13 +1,5 @@
 <template>
   <div id="index">
-    <div id="showPic" :style="{ backgroundImage: 'url(' + imgURL + ')' }">
-      <div id="saying">
-        <div>{{ this.todayPoem.daySentence }}</div>
-        <div id="author">
-          {{ this.todayPoem.dynasty }} {{ this.todayPoem.author }}
-        </div>
-      </div>
-    </div>
     本网站已运行:{{ this.timeMsg }}
     <div id="pageHelperUp">
       <el-pagination
@@ -70,14 +62,12 @@
 <script>
 import axios from "axios";
 import hljs from "highlight.js";
-axios.defaults.baseURL = "http://localhost:8081";
+axios.defaults.baseURL = "http://117.50.163.11:8081";
 export default {
   name: "Home",
   created() {
-    this.randomIngURL();
   },
   mounted() {
-    this.setDayPoem();
     this.getBlogList();
     this.getCreateDate();
     let _this = this; // 声明一个变量指向Vue实例this，保证作用域一致
@@ -138,14 +128,9 @@ export default {
     randomNum(minNum, maxNum) {
       return parseInt(Math.random() * (maxNum - minNum + 1) + minNum, 10);
     },
-    randomIngURL() {
-      const id = this.randomNum(1, 5);
-      this.imgURL = "https://img.nickxiao.icu/fushihui" + id + ".jpg";
-    },
     setDayPoem() {
       const jinrishici = require("jinrishici");
       jinrishici.load((result) => {
-        console.log(result);
         this.todayPoem.content = result.data.origin.content;
         this.todayPoem.author = result.data.origin.author;
         this.todayPoem.dynasty = result.data.origin.dynasty;
@@ -165,7 +150,6 @@ export default {
           limit: this.page.pageSize,
         })
         .then((result) => {
-          console.log(result);
           this.blogList = result.data.blogs;
           this.page.total = result.data.total;
           loading.close();
@@ -201,7 +185,6 @@ export default {
     async getCreateDate() {
       await axios.get("/mis/timeRecord")
       .then((result) => {
-        console.log(result);
         this.createDate = result.data.createTime;
         this.getDateDiff();
       });
